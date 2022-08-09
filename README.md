@@ -82,4 +82,20 @@ default via 10.0.2.2 dev eth0 proto dhcp metric 100
 
 Добавляю в Vagrantfile два сервера office1Server и office2Server
 
+сеть на office1Server
 
+```
+[vagrant@office1Server ~]$ ip r
+default via 10.0.2.2 dev eth0 proto dhcp metric 100
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 metric 100
+192.168.2.192/26 dev eth1 proto kernel scope link src 192.168.2.194 metric 101
+```
+
+сеть на office2Server
+
+```
+[vagrant@office2Server ~]$ ip r
+default via 10.0.2.2 dev eth0 proto dhcp metric 101
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 metric 101
+192.168.1.192/26 dev eth1 proto kernel scope link src 192.168.1.194 metric 100
+```
