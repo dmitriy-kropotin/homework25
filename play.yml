@@ -1,6 +1,13 @@
 ---
 - name: homework25 provision
   hosts: inetRouter, centralRouter
+  handlers:
+  - name: restart network
+    systemd:
+      name: network
+      state: restarted
+      enabled: yes
+      
   become: true
   tasks:
   - name: install iptables
@@ -62,9 +69,4 @@
     notify:
       - restart network
       
-handlers:
-  - name: restart network
-    systemd:
-      name: network
-      state: restarted
-      enabled: yes 
+ 
