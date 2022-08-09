@@ -1,5 +1,5 @@
 ---
-- hosts: inetRouter # server web23 provision
+- hosts: inetRouter 
   become: true
   tasks:
   - name: install iptables
@@ -11,7 +11,7 @@
       update_cache: true
   - name: copy iptables config
     template:
-      src: iptables
+      src: iptables-inetRouter
       dest: /etc/sysconfig/iptables
       owner: root
       group: root
@@ -21,3 +21,32 @@
       name: iptables
       state: restarted
       enabled: true
+  - name: set up forward packages across routers
+    sysctl:
+      name: net.ipv4.conf.all.forwarding
+      value: '1'
+      state: present
+   
+- hosts: centralServer
+  become: true
+  tasks:
+  - name: deisable default route centralServer
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+      line: DEFROUTE=no
+  - name: add default gateway for centralServer
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      line: GATEWAY=192.168.0.1
+      
+- hosts: centralRouter 
+  become: true
+  tasks:
+  - name: deisable default route centralServer
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+      line: DEFROUTE=no
+  - name: add default gateway for centralServer
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      line: GATEWAY=192.168.255.1      
