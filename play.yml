@@ -52,4 +52,7 @@
   - name: add default gateway for centralServer
     lineinfile:
       dest: /etc/sysconfig/network-scripts/ifcfg-eth1
-      line: GATEWAY=192.168.255.1      
+      line: "{{ item }}" 
+    loop:
+      - GATEWAY=192.168.255.1
+      - DEFROUTE=yes     
