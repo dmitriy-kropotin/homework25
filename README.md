@@ -27,8 +27,12 @@ default via 10.0.2.2 dev eth0 proto dhcp metric 100
 192.168.0.0/28 dev eth1 proto kernel scope link src 192.168.0.2 metric 101
 ```
 ```
-Занятые диапазоны               Network         Broadcast     
-192.168.255.1 - 192.168.255.2   192.168.255.0   192.168.255.3
+Network             Занятые диапазоны                  Broadcast     
+192.168.255.0/30    192.168.255.1 - 192.168.255.2      192.168.255.3 inetrouter-centralrouter
 
-192.168.0.1 - 192.168.0.14      192.168.0.0     192.168.0.15
+192.168.0.0/28      192.168.0.1 - 192.168.0.14         192.168.0.15 centralrouter-centralserver
+
+
+
+
 ```
