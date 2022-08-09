@@ -89,7 +89,7 @@ Vagrant.configure("2") do |config|
                 cp ~vagrant/.ssh/auth* ~root/.ssh
         SHELL
         
-       if box.vm.host_name == "office2Server"
+       if vm.hostname == "office2Server"
           box.vm.provision "ansible" do |ansible|
             ansible.playbook = "play.yml"
             #ansible.inventory_path = "ansible/hosts"
