@@ -1,11 +1,5 @@
 ---
 - name: homework25 provision
-  handlers:
-  - name: restart network
-    systemd:
-      name: network
-      state: restarted
-      enabled: yes
   hosts: inetRouter, centralRouter
   become: true
   tasks:
@@ -50,7 +44,13 @@
       - DEFROUTE=yes
     notify:
       - restart network  
-      
+  handlers:
+  - name: restart network
+    systemd:
+      name: network
+      state: restarted
+      enabled: yes   
+     
 - hosts: centralRouter 
   become: true
   tasks:
@@ -67,5 +67,11 @@
       - DEFROUTE=yes   
     notify:
       - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      name: network
+      state: restarted
+      enabled: yes 
       
  
