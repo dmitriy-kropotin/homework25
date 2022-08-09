@@ -54,7 +54,7 @@
 - hosts: centralRouter 
   become: true
   tasks:
-  - name: deisable default route centralServer
+  - name: deisable default route centralRouter
     lineinfile:
       dest: /etc/sysconfig/network-scripts/ifcfg-eth0
       line: DEFROUTE=no
