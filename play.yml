@@ -1,5 +1,6 @@
 ---
-- hosts: inetRouter, centralRouter
+- name: homework25 provision
+  hosts: inetRouter, centralRouter
   become: true
   tasks:
   - name: install iptables
@@ -41,6 +42,8 @@
     loop:
       - GATEWAY=192.168.0.1
       - DEFROUTE=yes
+    notify:
+      - restart network  
       
 - hosts: centralRouter 
   become: true
@@ -55,4 +58,13 @@
       line: "{{ item }}" 
     loop:
       - GATEWAY=192.168.255.1
-      - DEFROUTE=yes     
+      - DEFROUTE=yes   
+    notify:
+      - restart network
+      
+  handlers:
+    - name: restart network
+      systemd:
+        name: network
+        state: restarted
+        enabled: yes 
