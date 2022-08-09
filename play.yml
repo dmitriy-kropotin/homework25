@@ -1,0 +1,23 @@
+---
+- hosts: inetRouter # server web23 provision
+  become: true
+  tasks:
+  - name: install iptables
+    yum:
+      name:
+        - iptables
+        - iptables-services
+      state: present
+      update_cache: true
+  - name: copy iptables config
+    template:
+      src: iptables
+      dest: /etc/sysconfig/iptables
+      owner: root
+      group: root
+      mode: 0600
+  - name: start and enable iptables service
+    service:
+      name: iptables
+      state: restarted
+      enabled: true
