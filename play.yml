@@ -1,5 +1,5 @@
 ---
-- hosts: inetRouter 
+- hosts: inetRouter, centralRouter
   become: true
   tasks:
   - name: install iptables
@@ -37,7 +37,10 @@
   - name: add default gateway for centralServer
     lineinfile:
       dest: /etc/sysconfig/network-scripts/ifcfg-eth1
-      line: GATEWAY=192.168.0.1
+      line: "{{ item }}" 
+    loop:
+      - GATEWAY=192.168.0.1
+      - DEFROUTE=yes
       
 - hosts: centralRouter 
   become: true
