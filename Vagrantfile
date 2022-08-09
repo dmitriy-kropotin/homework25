@@ -89,26 +89,16 @@ Vagrant.configure("2") do |config|
                 cp ~vagrant/.ssh/auth* ~root/.ssh
         SHELL
         
-        case boxname.to_s
-        when "inetRouter"
-          box.vm.provision "shell", run: "always", inline: <<-SHELL
-            sysctl net.ipv4.conf.all.forwarding=1
-            iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
-            SHELL
-        when "centralRouter"
-          box.vm.provision "shell", run: "always", inline: <<-SHELL
-            sysctl net.ipv4.conf.all.forwarding=1
-            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
-            echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
-            systemctl restart network
-            SHELL
-        when "centralServer"
-          box.vm.provision "shell", run: "always", inline: <<-SHELL
-            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
-            echo "GATEWAY=192.168.0.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
-            systemctl restart network
-            SHELL
-        end
+       if boxconfig[:vm_name] == "office2Server"
+          box.vm.provision "ansible" do |ansible|
+            ansible.playbook = "play.yml"
+            #ansible.inventory_path = "ansible/hosts"
+            ansible.host_key_checking = "false"
+            ansible.limit = "all"
+            ansible.become = "true"
+          end
+       end
+
 
       end
 
