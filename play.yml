@@ -62,9 +62,9 @@
     notify:
       - restart network
       
-  handlers:
-    - name: restart network
-      systemd:
-        name: network
-        state: restarted
-        enabled: yes 
+handlers:
+  - name: restart network
+    systemd:
+      name: network
+      state: restarted
+      enabled: yes 
