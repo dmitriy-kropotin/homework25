@@ -1,6 +1,7 @@
 ---
 - name: homework25 provision
   hosts: inetRouter, centralRouter
+  become: true
   tasks:
   - name: install iptables
     yum:
@@ -28,6 +29,7 @@
       state: present
 
 - hosts: inetRouter
+  become: true
   tasks:
   - name: add route to internal network
     lineinfile:
@@ -42,6 +44,7 @@
 
 
 - hosts: centralServer
+  become: true
   tasks:
   - name: deisable default route centralServer
     lineinfile:
@@ -64,6 +67,7 @@
       
      
 - hosts: centralRouter 
+  become: true
   tasks:
   - name: deisable default route centralRouter
     lineinfile:
@@ -85,6 +89,7 @@
       state: restarted
       
 - hosts: inetRouter
+  become: true
   tasks:
   - name: restart network
     command: /etc/init.d/network restart
