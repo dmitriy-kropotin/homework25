@@ -36,12 +36,6 @@
       dest: /etc/sysconfig/network-scripts/route-eth1
       line: 192.168.0.0/16 via 192.168.255.2 
       create: true
-    notify:
-      - restart network  
-  handlers:
-  - name: restart network
-    command: /etc/init.d/network restart
-
 
 - hosts: centralServer
   become: true
@@ -57,14 +51,6 @@
     loop:
       - GATEWAY=192.168.0.1
       - DEFROUTE=yes
-    notify:
-      - restart network  
-  handlers:
-  - name: restart network
-    service:
-      name: network
-      state: restarted
-      
      
 - hosts: centralRouter 
   become: true
@@ -80,15 +66,8 @@
     loop:
       - GATEWAY=192.168.255.1
       - DEFROUTE=yes   
-    notify:
-      - restart network
-  handlers:
-  - name: restart network
-    service:
-      name: network
-      state: restarted
       
-- hosts: inetRouter
+- hosts: inetRouter, centralRouter, centralServer
   become: true
   tasks:
   - name: restart network
