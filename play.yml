@@ -148,7 +148,7 @@
       - GATEWAY=192.168.1.193
       - DEFROUTE=yes
  
-- hosts: inetRouter, centralRouter, centralServer
+- hosts: inetRouter, centralRouter, office1router, office2router, centralServer, office1Server, office2Server
   become: true
   tasks:
   - name: restart network 01
