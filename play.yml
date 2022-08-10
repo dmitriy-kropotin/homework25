@@ -1,6 +1,6 @@
 ---
 - name: homework25 provision
-  hosts: inetRouter, centralRouter
+  hosts: inetRouter, centralRouter, office1router, office2router
   become: true
   tasks:
   - name: install iptables
@@ -12,7 +12,7 @@
       update_cache: true
   - name: copy iptables config
     template:
-      src: iptables-inetRouter
+      src: iptables-Router
       dest: /etc/sysconfig/iptables
       owner: root
       group: root
