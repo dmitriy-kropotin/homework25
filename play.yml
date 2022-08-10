@@ -40,9 +40,7 @@
       - restart network  
   handlers:
   - name: restart network
-    service:
-      name: network
-      state: restarted
+    command: /etc/init.d/network restart
 
 
 - hosts: centralServer
