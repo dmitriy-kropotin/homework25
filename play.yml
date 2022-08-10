@@ -71,7 +71,9 @@
   become: true
   tasks:
   - name: restart network
-    command: /etc/init.d/network restart
+    service:
+      name: network
+      state: restarted
  
       
  
