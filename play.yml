@@ -70,10 +70,13 @@
 - hosts: inetRouter, centralRouter, centralServer
   become: true
   tasks:
-  - name: restart network
+  - name: restart network 01
     service:
       name: network
       state: restarted
- 
+  - name: restart network 02
+    service:
+      name: network
+      state: restarted
       
  
