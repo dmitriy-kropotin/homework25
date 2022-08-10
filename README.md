@@ -1,14 +1,14 @@
-init
-сети на inetRouter
+###HOMEWORK25###
+
+1. Сети на inetRouter
 ```
 [vagrant@inetRouter ~]$ ip r
 default via 10.0.2.2 dev eth0 proto dhcp metric 100
 10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 metric 100
 192.168.255.0/30 dev eth1 proto kernel scope link src 192.168.255.1 metric 101
 ```
-Сеть - 192.168.255.1/30
 
-Сети на centralRouter
+2. Сети на centralRouter
 ```
 [vagrant@centralRouter ~]$ ip r
 default via 10.0.2.2 dev eth0 proto dhcp metric 100
@@ -19,7 +19,7 @@ default via 10.0.2.2 dev eth0 proto dhcp metric 100
 192.168.255.0/30 dev eth1 proto kernel scope link src 192.168.255.2 metric 101
 ```
 
-Сети на centralServer
+3. Сети на centralServer
 
 ```
 default via 10.0.2.2 dev eth0 proto dhcp metric 100
@@ -27,7 +27,7 @@ default via 10.0.2.2 dev eth0 proto dhcp metric 100
 192.168.0.0/28 dev eth1 proto kernel scope link src 192.168.0.2 metric 101
 ```
 
-Существующие сети: 
+4. Выпишем существующие сети: 
 
 ```
 Network             Диапазоны                          Broadcast     
@@ -40,7 +40,8 @@ Network             Диапазоны                          Broadcast
 192.168.0.64/26     192.168.0.65-192.168.0.126         192.168.0.127
 ```
 
-Для связки роутеров выберем доступные сети 
+5. Для связки роутеров выберем доступные сети:
+
 centralRouter- office1Router -
 ```
 Network             Диапазон                      Broadcast
@@ -54,7 +55,7 @@ Network             Диапазон                      Broadcast
 
 ```
 
-Добавляю в Vagrantfile два роутера office1router и office2router
+6. Добавляю в Vagrantfile два роутера office1router и office2router
 сети на office1router
 
 ```
@@ -80,7 +81,7 @@ default via 10.0.2.2 dev eth0 proto dhcp metric 100
 192.168.255.8/30 dev eth1 proto kernel scope link src 192.168.255.10 metric 101
 ```
 
-Добавляю в Vagrantfile два сервера office1Server и office2Server
+7. Добавляю в Vagrantfile два сервера office1Server и office2Server
 
 сеть на office1Server
 
@@ -99,7 +100,65 @@ default via 10.0.2.2 dev eth0 proto dhcp metric 101
 10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 metric 101
 192.168.1.192/26 dev eth1 proto kernel scope link src 192.168.1.194 metric 100
 ```
+8. Теперь необходимо на всех машинах, кроме inetRouter, убрать маршрут по умолчанию, создаваемый Vagrant, и прописать маршрут по умолчанию через соотвтесвующий роутер
+Пример task в  ansible для сервера
 
+```
+- hosts: centralServer
+  become: true
+  tasks:
+  - name: deisable default route centralServer
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+      line: DEFROUTE=no
+  - name: add default gateway for centralServer
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      line: "{{ item }}" 
+    loop:
+      - GATEWAY=192.168.0.1
+      - DEFROUTE=yes 
+```
+
+Пример для роутера
+
+```
+- hosts: office1router 
+  become: true
+  tasks:
+  - name: deisable default route centralRouter
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+      line: DEFROUTE=no
+  - name: add default gateway for centralServer
+    lineinfile:
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      line: "{{ item }}" 
+    loop:
+      - GATEWAY=192.168.255.5
+      - DEFROUTE=yes
+```
+
+9. На роутерах inetRouter, CentralRouter необходимо прописать обратные маршруты до локальных сетей
+на inetRouter достаточно `192.168.0.0/16 via 192.168.255.2 dev eth1 proto static metric 101`
+на centralRouter так
+```
+
+192.168.1.0/25 via 192.168.255.10 dev eth6 proto static metric 106
+192.168.1.128/26 via 192.168.255.10 dev eth6 proto static metric 106
+192.168.1.192/26 via 192.168.255.10 dev eth6 proto static metric 106
+192.168.2.0/26 via 192.168.255.6 dev eth5 proto static metric 105
+192.168.2.64/26 via 192.168.255.6 dev eth5 proto static metric 105
+192.168.2.128/26 via 192.168.255.6 dev eth5 proto static metric 105
+192.168.2.192/26 via 192.168.255.6 dev eth5 proto static metric 105
+
+```
+
+10. На всех роутерах обязательно включить параметр `net.ipv4.conf.all.forwarding=1`
+11. На inetRouter обязательно добавить правило MASQUERADE `-A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE`
+12. Поднимаю машинки с последующим provision через ansible 
+13. Проверяю. Трафик ходит правильно. 
+office1Server
 ```
 [vagrant@office1Server ~]$ traceroute 8.8.8.8
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
@@ -127,7 +186,7 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 22  dns.google (8.8.8.8)  22.050 ms  22.015 ms *
 
 ```
-
+office2Server
 ```
 [vagrant@office2Server ~]$ traceroute 8.8.8.8
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
