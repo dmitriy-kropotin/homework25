@@ -1,6 +1,6 @@
 ### HOMEWORK25 ###
 
-![-1x-1x80_IMG_20220811_140434](https://user-images.githubusercontent.com/98701086/184120107-241dc9da-06cd-4a74-9f7f-a769ccff8932.jpg)
+!https://raw.githubusercontent.com/dmitriy-kropotin/dmitriy-kropotin/main/hw25.drawio.png
 
 1. Сети на inetRouter
 ```
